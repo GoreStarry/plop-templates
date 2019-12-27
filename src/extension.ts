@@ -47,12 +47,13 @@ async function runPlopInNewTerminal(dirUri: vscode.Uri) {
     // user based settings
     const userSettings = vscode.workspace.getConfiguration();
     const plopFileName: string = userSettings.get('plopTemplates.configFileName') || 'plopfile.js';
+    const plopFileAbsolutePath: any = userSettings.get('plopTemplates.configFileAbsolutePath');
     const plopTerminalName: string = userSettings.get('plopTemplates.terminalName') || 'New File from Plop Template';
     const destinationpathName: string = userSettings.get('plopTemplates.destinationPath') || 'destinationpath';
     const plopCommand: string = (userSettings.get('plopTemplates.plopCommand') as string || 'plop').toLowerCase().trim();
     let plopCommandRelative: string = plopCommand;
 
-    const plopFile = vscode.workspace.rootPath + "/" + plopFileName;
+    const plopFile = `${ plopFileAbsolutePath ? plopFileAbsolutePath : vscode.workspace.rootPath }/${plopFileName}`;
     let plop: any;
 
     try {
@@ -111,7 +112,7 @@ async function runPlopInNewTerminal(dirUri: vscode.Uri) {
     }
 
     plopTerminal.show();
-    plopTerminal.sendText(`${plopCommandRelative} '${selectedGenerator.name ? selectedGenerator.name : selectedGenerator.label}' --${destinationpathName} '${destPath}'`);
+    plopTerminal.sendText(`${plopCommandRelative} '${selectedGenerator.name ? selectedGenerator.name : selectedGenerator.label}' --${destinationpathName} '${destPath}' --plopfile '${plopFile}'`);
 }
 
 export function activate(context: vscode.ExtensionContext) {
